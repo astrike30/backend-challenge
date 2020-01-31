@@ -62,10 +62,22 @@ def get_club_description(club):
     """
     Extract club description from a soup of 
     """
+    elts = get_elements_with_class(club, 'em', '')
+    if len(elts) < 1:
+        return ''
+    return elts[0].text
+
     return '' # TODO: Implement this function
 
 def get_club_tags(club):
     """
     Get the tag labels for all tags associated with a single club.
     """
-    return [] # TODO: Implement this function
+
+    div = get_elements_with_class(club, 'div', '')[0]
+    if len(div) < 1:
+        return []
+
+    tags = get_elements_with_class(div, 'span', 'tag is-info is-rounded')
+
+    return [tag.text for tag in tags]
