@@ -1,11 +1,12 @@
 from bs4 import BeautifulSoup
-
+import urllib.request
 
 def get_html(url):
     """
     Retrieve the HTML from the website at `url`.
+    
     """
-    return None  # TODO: Implement this function
+    return urllib.request.urlopen(url)
 
 def get_clubs_html():
     """
@@ -67,4 +68,3 @@ def get_club_tags(club):
     Get the tag labels for all tags associated with a single club.
     """
     return [] # TODO: Implement this function
-
