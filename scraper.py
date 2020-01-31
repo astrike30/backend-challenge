@@ -44,7 +44,8 @@ def get_clubs(soup):
     This function should return a list of soups which each correspond to the html
     for a single club.
     """
-    return [] # TODO: Implement this function
+
+    return get_elements_with_class(soup, 'div', 'box')
 
 def get_club_name(club):
     """
