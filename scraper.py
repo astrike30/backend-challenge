@@ -84,10 +84,6 @@ def get_club_tags(club):
 
     return [tag.text for tag in tags]
 
-def get_clubs_json():
-    with open('clubs.json') as json_file:
-        return json.load(json_file)
-
 if __name__ == "__main__":
 
     soup = soupify(get_clubs_html())
