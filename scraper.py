@@ -1,5 +1,7 @@
 from bs4 import BeautifulSoup
 import urllib.request
+from club import Club
+import json
 
 def get_html(url):
     """
@@ -67,7 +69,7 @@ def get_club_description(club):
         return ''
     return elts[0].text
 
-    return '' # TODO: Implement this function
+    return ''
 
 def get_club_tags(club):
     """
@@ -81,3 +83,18 @@ def get_club_tags(club):
     tags = get_elements_with_class(div, 'span', 'tag is-info is-rounded')
 
     return [tag.text for tag in tags]
+
+if __name__ == "__main__":
+
+    soup = soupify(get_clubs_html())
+    clubs = [Club(get_club_name(x), get_club_description(x), 
+                get_club_tags(x)) for x in get_clubs(soup)]
+    clubs = [vars(club) for club in clubs]
+    print(clubs)
+    with open('clubs.json', 'w') as outfile:
+        json.dump(clubs, outfile)
+
+
+
+
+
