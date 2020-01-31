@@ -88,11 +88,19 @@ def get_clubs_json():
     with open('clubs.json') as json_file:
         return json.load(json_file)
 
+def write_new_club(club_json):
+    with open('clubs.json') as json_file:
+        existing = json.load(json_file)
+        existing.append(club_json)
+        with open('clubs.json', 'w') as outfile:
+            json.dump(existing, outfile)
+
+
 if __name__ == "__main__":
 
     soup = soupify(get_clubs_html())
-    clubs = [Club(get_club_name(x), get_club_tags(x)) for x in get_clubs(soup),
-             get_club_description(x)]
+    clubs = [Club(get_club_name(x), get_club_tags(x),
+                get_club_description(x)) for x in get_clubs(soup)]
     clubs = [vars(club) for club in clubs]
     print(clubs)
     with open('clubs.json', 'w') as outfile:
