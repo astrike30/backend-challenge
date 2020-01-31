@@ -12,9 +12,15 @@ def main():
 def api():
     return "Welcome to the Penn Club Review API!."
 
-@app.route('/api/clubs')
+@app.route('/api/clubs', methods=['GET', 'POST'])
 def clubs():
-    return jsonify(get_clubs_json())
+
+	if request.method == 'GET':
+		return jsonify(get_clubs_json())
+	elif request.method == 'POST':
+		print(request.json)
+		write_new_club(request.json)
+		return 'OK', 200
 
 if __name__ == '__main__':
     app.run()
