@@ -91,8 +91,8 @@ def get_clubs_json():
 if __name__ == "__main__":
 
     soup = soupify(get_clubs_html())
-    clubs = [Club(get_club_name(x), get_club_description(x), 
-                get_club_tags(x)) for x in get_clubs(soup)]
+    clubs = [Club(get_club_name(x), get_club_tags(x)) for x in get_clubs(soup),
+             get_club_description(x)]
     clubs = [vars(club) for club in clubs]
     print(clubs)
     with open('clubs.json', 'w') as outfile:
