@@ -1,11 +1,13 @@
 from bs4 import BeautifulSoup
-
+import requests
 
 def get_html(url):
     """
     Retrieve the HTML from the website at `url`.
     """
-    return None  # TODO: Implement this function
+
+    response = requests.get(url)
+    return response
 
 def get_clubs_html():
     """
