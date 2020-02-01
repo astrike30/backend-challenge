@@ -84,6 +84,18 @@ def get_club_tags(club):
 
     return [tag.text for tag in tags]
 
+def inc_dec_fav_count(clubname, amt):
+
+    clubs = read_json()
+
+    for i, club in enumerate(clubs):
+        if club["name"] == clubname:
+            print(clubs[i])
+            print(clubs[i])
+            clubs[i]["favourites"] += amt
+            break
+    write_json(clubs)
+
 def read_json():
     with open('clubs.json') as json_file:
         return json.load(json_file)
@@ -107,9 +119,9 @@ def add_favourites_field():
     """
     existing = read_json()
 
-    if 'favourties' not in existing[0].keys():
+    if 'favourites' not in existing[0].keys():
         for club in existing:
-            club['favourties'] = 0
+            club['favourites'] = 0
     write_json(existing)
     print(existing[0])   
 

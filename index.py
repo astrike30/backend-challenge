@@ -36,6 +36,18 @@ def users(username):
 
 	return username
 
+@app.route('/api/favorite', methods=['POST'])
+def favourite():
+	if request.method == 'POST':
+
+		user = request.json['user']
+		club = request.json['club']
+
+		if not flip_user_fav(user, club):
+			inc_dec_fav_count(club, +1)
+		else:
+			inc_dec_fav_count(club, -1)
+	return 'OK', 200
 
 if __name__ == '__main__':
     app.run()
