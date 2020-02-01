@@ -95,6 +95,19 @@ def write_new_club(club_json):
         with open('clubs.json', 'w') as outfile:
             json.dump(existing, outfile)
 
+def add_favourites_field():
+    """
+    Adds a favourites field to the json of scraped data.
+    """
+    with open('clubs.json') as json_file:
+        existing = json.load(json_file)
+        
+        if 'favourties' not in existing[0].keys():
+            for club in existing:
+                club['favourties'] = 0
+        with open('clubs.json', 'w') as outfile:
+            json.dump(existing, outfile)
+        print(existing[0])   
 
 if __name__ == "__main__":
 
@@ -106,6 +119,7 @@ if __name__ == "__main__":
     with open('clubs.json', 'w') as outfile:
         json.dump(clubs, outfile)
 
+    add_favourites_field()
 
 
 
