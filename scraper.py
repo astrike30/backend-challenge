@@ -84,30 +84,34 @@ def get_club_tags(club):
 
     return [tag.text for tag in tags]
 
+def read_json():
+    with open('clubs.json') as json_file:
+        return json.load(json_file)
+
+def write_json(toWrite):
+    with open('clubs.json', 'w') as outfile:
+        json.dump(toWrite, outfile)
+
+
 def get_clubs_json():
     with open('clubs.json') as json_file:
         return json.load(json_file)
 
 def write_new_club(club_json):
-    with open('clubs.json') as json_file:
-        existing = json.load(json_file)
-        existing.append(club_json)
-        with open('clubs.json', 'w') as outfile:
-            json.dump(existing, outfile)
+    with open('clubs.json', 'w') as outfile:
+        json.dump(club_json, outfile)
 
 def add_favourites_field():
     """
     Adds a favourites field to the json of scraped data.
     """
-    with open('clubs.json') as json_file:
-        existing = json.load(json_file)
-        
-        if 'favourties' not in existing[0].keys():
-            for club in existing:
-                club['favourties'] = 0
-        with open('clubs.json', 'w') as outfile:
-            json.dump(existing, outfile)
-        print(existing[0])   
+    existing = read_json()
+
+    if 'favourties' not in existing[0].keys():
+        for club in existing:
+            club['favourties'] = 0
+    write_json(existing)
+    print(existing[0])   
 
 if __name__ == "__main__":
 
@@ -116,8 +120,7 @@ if __name__ == "__main__":
                 get_club_description(x)) for x in get_clubs(soup)]
     clubs = [vars(club) for club in clubs]
     print(clubs)
-    with open('clubs.json', 'w') as outfile:
-        json.dump(clubs, outfile)
+    write_new_club(clubs)
 
     add_favourites_field()
 
