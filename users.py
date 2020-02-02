@@ -1,13 +1,20 @@
 import json
+from passlib.hash import pbkdf2_sha256
+import random
+import time
+import string
 
 class User:
 
-	def __init__(self, username, name, year, interests, favs=[]):
+	def __init__(self, username, name, year, interests, passwordHash, token, token_expiry,favs=[]):
 		self.username = username
 		self.name = name
 		self.year = year
 		self.interests = interests
 		self.favourites = favs
+		self.token = token
+		self.passwordHash = passwordHash
+		self.token_expiry = token_expiry
 
 def read_json():
     with open('users.json') as json_file:
@@ -17,13 +24,47 @@ def write_json(toWrite):
     with open('users.json', 'w') as outfile:
         json.dump(toWrite, outfile)
 
-def write_user(username, name, year, interests, favs=[]):
-
-	user = {"name": name, "year": year, "interests": interests, "favourites": []}
+def write_user(username, name, year, interests, password ,favs=[]):
+	
+	hashed = pbkdf2_sha256.hash(password)
+	token = secure_token()
+	user = {
+			"token": token, "token_expiry": int(time.time()) + 60*60*24*30, # lasts 30 days
+			"password": hashed, "name": name, "year": year, 
+			"interests": interests, "favourites": []
+			}
 	existing = read_json()
 	existing[username] = user
 	write_json(existing)
+	return token
 
+def secure_token():
+	return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(20))
+
+def update_token(username):
+	existing = read_json()
+	existing["username"]["token"] = secure_token()
+	existing["username"]["token_expiry"] = int(time.time()) + 60*60*24*30
+	write_json(existing)
+	return new_token
+
+def validate_token(username, token):
+	user = get_user(username)
+	if user.token == token and user.token_expiry > time.time():
+		return True
+	else:
+		return False
+
+def get_token(username, password):
+	user = get_user(username)
+
+	if pbkdf2_sha256.verify(password, user["password"]):
+		if (time.time() > user.token_expiry):
+			return update_token(username)
+		else:
+			return user.token
+	else:
+		return None
 
 def get_user(username):
 
@@ -35,7 +76,8 @@ def get_user(username):
 
 		user = existing[username]
 		return User(username, user["name"], user["year"],
-					user["interests"], user["favourites"])
+					user["interests"], user['password'], user["token"], 
+					user["token_expiry"], favs=user["favourites"])
 
 def flip_user_fav(username, club):
 	existing = read_json()
@@ -54,4 +96,4 @@ def flip_user_fav(username, club):
 	return inc_dec
 
 if __name__ == "__main__":
-	write_user("jen", "Jennifer", 2023, ["Programming", "Sports"])
+	write_user("jen", "Jennifer", 2023, ["Programming", "Sports"], "jen's password")

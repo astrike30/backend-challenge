@@ -1,1 +1,1 @@
-{"jen": {"name": "Jennifer", "year": 2023, "interests": ["Programming", "Sports"], "favourites": ["Arun Fan Club"]}}
+{"jen": {"token": "JYBDP70GW1NF9DWQS615", "token_expiry": 1583209585, "password": "$pbkdf2-sha256$29000$do5RirF2DgEgZMwZoxTCOA$.P.nWymcYXo7fx6kte0nTNjlWnbUBogv//33Tezz.IQ", "name": "Jennifer", "year": 2023, "interests": [], "favourites": ["Arun Fan Club"]}}
