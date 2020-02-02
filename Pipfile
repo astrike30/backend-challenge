@@ -8,6 +8,9 @@ verify_ssl = true
 [packages]
 flask = "*"
 beautifulsoup4 = "*"
+passlib = "*"
+secrets = "*"
+uuid = "*"
 
 [requires]
 python_version = "3.7"
