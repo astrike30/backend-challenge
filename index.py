@@ -30,9 +30,13 @@ def users(username):
 	user = get_user(username)
 	
 	if user is None:
-		return "User does not exist.", 404
+		return jsonify({"message": "error"})
 	else:
-		return jsonify(vars(user))
+		json = vars(user)
+		del json["passwordHash"]
+		del json["token"]
+		del json["token_expiry"]
+		return jsonify(json)
 
 	return username
 
@@ -40,14 +44,52 @@ def users(username):
 def favourite():
 	if request.method == 'POST':
 
+		token = request.json['token']
 		user = request.json['user']
 		club = request.json['club']
 
-		if not flip_user_fav(user, club):
-			inc_dec_fav_count(club, +1)
+		if validate_token(user, token):
+			if not flip_user_fav(user, club):
+				inc_dec_fav_count(club, +1)
+			else:
+				inc_dec_fav_count(club, -1)
+			return jsonify({"message": "OK"})
 		else:
-			inc_dec_fav_count(club, -1)
-	return 'OK', 200
+			return jsonify({"message": "error"})
+	
+
+@app.route('/api/signup', methods=['POST'])
+def signup():
+	username = request.json['username']
+	password = request.json['password']
+	name = request.json['name']
+	year = request.json['year']
+
+	if not get_user(username):
+		token = write_user(username, name, year, [], password)
+		return jsonify({"message": "success", "token": token})
+	else:
+		return jsonify({"message": "error"})
+
+
+@app.route('/api/token')
+def token():
+	username = request.form['username']
+	password = request.form['password']
+
+	token = get_token(username, password)
+
+	if token:
+		return jsonify({"message": "success", "token": token})
+	else:
+		return jsonify({"message": "error"})
+
 
 if __name__ == '__main__':
     app.run()
+
+
+
+
+
+
