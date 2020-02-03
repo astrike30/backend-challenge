@@ -25,9 +25,9 @@ def clubs():
 		categories = request.json["categories"]
 
 		if write_new_club(name, description, categories):
-			return jsonify({"message": "success"}), 200
+			return jsonify({"message": "Created new club"}), 200
 		else:
-			return jsonify({"message": "Club already exists"})
+			return jsonify({"message": "Club already exists, added updated information"})
 
 @app.route('/api/user/<string:username>')
 def users(username):

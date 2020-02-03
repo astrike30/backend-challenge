@@ -91,7 +91,6 @@ def inc_dec_fav_count(clubname, amt):
     for i, club in enumerate(clubs):
         if club["name"] == clubname:
             print(clubs[i])
-            print(clubs[i])
             clubs[i]["favourites"] += amt
             break
     write_json(clubs)
@@ -110,15 +109,25 @@ def write_new_club(name, description, categories):
     clubs = read_json()
 
     if name in [club["name"] for club in clubs]:
+
+        for i, club in enumerate(clubs):
+            if name == club["name"]:
+                updated_club = clubs[i]
+                updated_club["name"] = name
+                updated_club["description"] = description
+                updated_club["categories"] = categories
+                del clubs[i]
+                clubs.append(updated_club)
+                break
+
+        write_json(clubs)
         return False
-
-    club_json = {"name": name, "categories": categories, "description": description,
-                "favourites": 0}
-
-    clubs.append(club_json)
-
-    write_json(clubs)
-    return True
+    else:      
+        club_json = {"name": name, "categories": categories, "description": description,
+                    "favourites": 0}
+        clubs.append(club_json)
+        write_json(clubs)
+        return True
 
 def add_favourites_field():
     """
@@ -130,14 +139,13 @@ def add_favourites_field():
         for club in existing:
             club['favourites'] = 0
     write_json(existing)
-    print(existing[0])   
 
 def create_comment_file():
     club = read_json()
     comment_dict = {}
 
     for club in clubs:
-        comment_dict[club["name"]] = []
+        comment_dict[club.name] = []
 
     with open('club_comments.json', 'w') as outfile:
         json.dump(comment_dict, outfile)
@@ -162,9 +170,8 @@ if __name__ == "__main__":
     soup = soupify(get_clubs_html())
     clubs = [Club(get_club_name(x), get_club_tags(x),
                 get_club_description(x)) for x in get_clubs(soup)]
-    clubs = [vars(club) for club in clubs]
-    print(clubs)
-    write_new_club(clubs)
+
+    [write_new_club(club.name, club.description, club.categories) for club in clubs]
 
     add_favourites_field()
     create_comment_file()
