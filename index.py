@@ -84,6 +84,22 @@ def token():
 	else:
 		return jsonify({"message": "error"})
 
+@app.route('/api/comment', methods=["POST", "GET"])
+def comment():
+	if request.method == 'POST':
+		token = request.json['token']
+		user = request.json['user']
+		club = request.json['club']
+		comment = request.json['comment']
+
+		if validate_token(user, token):
+			if add_club_comment(user, club, comment):
+				return jsonify({"message": "success"})
+			else:
+				return jsonify({"message": "Club does not exist"})
+		else:
+			return jsonify({"message": "Invalid token, it may be expired, try requesting a new one."})
+
 
 if __name__ == '__main__':
     app.run()

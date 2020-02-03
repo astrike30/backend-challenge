@@ -125,6 +125,31 @@ def add_favourites_field():
     write_json(existing)
     print(existing[0])   
 
+def create_comment_file():
+    club = read_json()
+    comment_dict = {}
+
+    for club in clubs:
+        comment_dict[club["name"]] = []
+
+    with open('club_comments.json', 'w') as outfile:
+        json.dump(comment_dict, outfile)
+
+def add_club_comment(user, club, comment):
+
+    with open('club_comments.json') as json_file:
+        comments = json.load(json_file)
+        if club in comments.keys():
+            if comments[club] is None:
+                 comments[club] = [user + ": " + comment]
+            else:
+                 comments[club].append(user + ": " + comment)
+            with open('club_comments.json', 'w') as outfile:
+                json.dump(comments, outfile)
+            return True
+        else:
+            return False
+
 if __name__ == "__main__":
 
     soup = soupify(get_clubs_html())
@@ -135,6 +160,7 @@ if __name__ == "__main__":
     write_new_club(clubs)
 
     add_favourites_field()
+    create_comment_file()
 
 
 
