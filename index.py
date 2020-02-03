@@ -56,11 +56,12 @@ def favourite():
 		if validate_token(user, token):
 			if not flip_user_fav(user, club):
 				inc_dec_fav_count(club, +1)
+				return jsonify({"message": "Added favourite"})
 			else:
 				inc_dec_fav_count(club, -1)
-			return jsonify({"message": "OK"})
+				return jsonify({"message": "Removed favourite"})
 		else:
-			return jsonify({"message": "error"})
+			return jsonify({"message": "Invalid Token"})
 	
 
 @app.route('/api/signup', methods=['POST'])
@@ -70,11 +71,11 @@ def signup():
 	name = request.json['name']
 	year = request.json['year']
 
-	if not get_user(username):
+	if get_user(username) is None:
 		token = write_user(username, name, year, [], password)
-		return jsonify({"message": "success", "token": token})
+		return jsonify({"message": "Signed up user", "token": token})
 	else:
-		return jsonify({"message": "error"})
+		return jsonify({"message": "User exists"})
 
 
 @app.route('/api/token')
@@ -85,9 +86,9 @@ def token():
 	token = get_token(username, password)
 
 	if token:
-		return jsonify({"message": "success", "token": token})
+		return jsonify({"message": "Generated new token successfully", "token": token})
 	else:
-		return jsonify({"message": "error"})
+		return jsonify({"message": "Incorrect username or password"})
 
 @app.route('/api/comment', methods=["POST", "GET"])
 def comment():
@@ -98,7 +99,7 @@ def comment():
 		comment = request.json['comment']
 		if validate_token(user, token):
 			if add_club_comment(user, club, comment):
-				return jsonify({"message": "success"})
+				return jsonify({"message": "Added comment successfully"})
 			else:
 				return jsonify({"message": "Club does not exist"})
 		else:
