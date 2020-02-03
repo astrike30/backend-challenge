@@ -165,6 +165,10 @@ def add_club_comment(user, club, comment):
         else:
             return False
 
+def get_all_comments():
+    with open('club_comments.json') as json_file:
+        return json.load(json_file)
+
 if __name__ == "__main__":
 
     soup = soupify(get_clubs_html())

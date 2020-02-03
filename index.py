@@ -96,7 +96,6 @@ def comment():
 		user = request.json['user']
 		club = request.json['club']
 		comment = request.json['comment']
-
 		if validate_token(user, token):
 			if add_club_comment(user, club, comment):
 				return jsonify({"message": "success"})
@@ -104,6 +103,13 @@ def comment():
 				return jsonify({"message": "Club does not exist"})
 		else:
 			return jsonify({"message": "Invalid token, it may be expired, try requesting a new one."})
+	else:
+		club = request.args["club"]
+		comments = get_all_comments()
+		if club in comments.keys():
+			return jsonify(comments[club])
+		else:
+			return jsonify({"message": "That club does not exist."})
 
 
 if __name__ == '__main__':
