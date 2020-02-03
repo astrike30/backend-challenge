@@ -22,7 +22,7 @@ def clubs():
 	elif request.method == 'POST':
 		print(request.json)
 		write_new_club(request.json)
-		return 'OK', 200
+		return jsonify({"message": "success"}), 200
 
 @app.route('/api/user/<string:username>')
 def users(username):
