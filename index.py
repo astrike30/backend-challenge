@@ -17,7 +17,7 @@ def api():
 @app.route('/api/clubs', methods=['GET', 'POST'])
 def clubs():
 	if request.method == 'GET':
-		return jsonify(get_clubs_json())
+		return jsonify(read_json())
 	elif request.method == 'POST':
 
 		name = request.json["name"]

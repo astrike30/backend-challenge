@@ -16,11 +16,11 @@ class User:
 		self.passwordHash = passwordHash
 		self.token_expiry = token_expiry
 
-def read_json():
+def read_user_json():
     with open('users.json') as json_file:
         return json.load(json_file)
 
-def write_json(toWrite):
+def write_user_json(toWrite):
     with open('users.json', 'w') as outfile:
         json.dump(toWrite, outfile)
 
@@ -35,7 +35,7 @@ def write_user(username, name, year, interests, password ,favs=[]):
 			}
 	existing = read_json()
 	existing[username] = user
-	write_json(existing)
+	write_user_json(existing)
 	return token
 
 def secure_token():
