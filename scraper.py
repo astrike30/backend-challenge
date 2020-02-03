@@ -105,13 +105,20 @@ def write_json(toWrite):
         json.dump(toWrite, outfile)
 
 
-def get_clubs_json():
-    with open('clubs.json') as json_file:
-        return json.load(json_file)
+def write_new_club(name, description, categories):
+    
+    clubs = read_json()
 
-def write_new_club(club_json):
-    with open('clubs.json', 'w') as outfile:
-        json.dump(club_json, outfile)
+    if name in [club["name"] for club in clubs]:
+        return False
+
+    club_json = {"name": name, "categories": categories, "description": description,
+                "favourites": 0}
+
+    clubs.append(club_json)
+
+    write_json(clubs)
+    return True
 
 def add_favourites_field():
     """

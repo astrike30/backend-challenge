@@ -16,13 +16,18 @@ def api():
 
 @app.route('/api/clubs', methods=['GET', 'POST'])
 def clubs():
-
 	if request.method == 'GET':
 		return jsonify(get_clubs_json())
 	elif request.method == 'POST':
-		print(request.json)
-		write_new_club(request.json)
-		return jsonify({"message": "success"}), 200
+
+		name = request.json["name"]
+		description = request.json["description"]
+		categories = request.json["categories"]
+
+		if write_new_club(name, description, categories):
+			return jsonify({"message": "success"}), 200
+		else:
+			return jsonify({"message": "Club already exists"})
 
 @app.route('/api/user/<string:username>')
 def users(username):
