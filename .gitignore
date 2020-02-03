@@ -1,3 +1,4 @@
 Pipfile.lock
 *.pyc
 clubs.json
+club_comments.json
