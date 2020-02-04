@@ -108,7 +108,7 @@ def write_json(toWrite):
     """
     Write a dictionary to the file as json.
     """
-    with open('clubs.json', 'w') as outfile:
+    with open('clubs.json', 'w+') as outfile:
         json.dump(toWrite, outfile)
 
 
@@ -193,6 +193,11 @@ if __name__ == "__main__":
     """
     Script should be run before the first time the webserver is started.
     """
+
+    file = open("clubs.json", "w+") # create the file if it doesn't exist
+    file.write("[]") # write and empty array to file.
+    file.close()
+
     soup = soupify(get_clubs_html()) # scrape the web data
     clubs = [Club(get_club_name(x), get_club_tags(x),
                 get_club_description(x)) for x in get_clubs(soup)] # put scraped web data into a List of users.
