@@ -5,7 +5,9 @@ import time
 import string
 
 class User:
-
+	"""
+	Object for representing stored users.
+	"""
 	def __init__(self, username, name, year, interests, passwordHash, token, token_expiry,favs=[]):
 		self.username = username
 		self.name = name
@@ -14,20 +16,29 @@ class User:
 		self.favourites = favs
 		self.token = token
 		self.passwordHash = passwordHash
-		self.token_expiry = token_expiry
+		self.token_expiry = token_expiry # Indicates when a user's token expires.
+		# For security a new token should be generated after a certain period.
 
 def read_user_json():
+	"""
+	Write json to users file.
+	"""
     with open('users.json') as json_file:
         return json.load(json_file)
 
 def write_user_json(toWrite):
+	"""
+	Write user json to users file.
+	"""
     with open('users.json', 'w') as outfile:
         json.dump(toWrite, outfile)
 
 def write_user(username, name, year, interests, password ,favs=[]):
-	
-	hashed = pbkdf2_sha256.hash(password)
-	token = secure_token()
+	"""
+	Write a new user to the users json file.
+	"""
+	hashed = pbkdf2_sha256.hash(password) # Generate a hash from plaintext password given.
+	token = secure_token() # Generate a new token for api calls.
 	user = {
 			"token": token, "token_expiry": int(time.time()) + 60*60*24*30, # lasts 30 days
 			"password": hashed, "name": name, "year": year, 
@@ -39,6 +50,9 @@ def write_user(username, name, year, interests, password ,favs=[]):
 	return token
 
 def secure_token():
+	"""
+	Generate a random 20 digit character sequence to be used as a token for api calls.
+	"""
 	return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(20))
 
 def update_token(username):
