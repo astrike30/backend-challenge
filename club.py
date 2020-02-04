@@ -1,3 +1,7 @@
+"""
+Object that is used for scraped club data
+"""
+
 class Club:
 
 	def __init__(self, name, categories, description, favourites=0):
