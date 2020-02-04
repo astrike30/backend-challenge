@@ -85,30 +85,41 @@ def get_club_tags(club):
     return [tag.text for tag in tags]
 
 def inc_dec_fav_count(clubname, amt):
-
+    """
+    Increment the the club favourite amount by either 1 or -1.
+    """
     clubs = read_json()
 
     for i, club in enumerate(clubs):
         if club["name"] == clubname:
             print(clubs[i])
             clubs[i]["favourites"] += amt
-            break
+            break # Stop loop when the club is found
     write_json(clubs)
 
 def read_json():
+    """
+    Read all the json from the file and return it as a dict.
+    """
     with open('clubs.json') as json_file:
         return json.load(json_file)
 
 def write_json(toWrite):
+    """
+    Write a dictionary to the file as json.
+    """
     with open('clubs.json', 'w') as outfile:
         json.dump(toWrite, outfile)
 
 
 def write_new_club(name, description, categories):
-    
+    """
+    Add a new club if no club with that name alread exists. If the club exists, then update
+    its information.
+    """
     clubs = read_json()
 
-    if name in [club["name"] for club in clubs]:
+    if name in [club["name"] for club in clubs]: # if club already exists, update it
 
         for i, club in enumerate(clubs):
             if name == club["name"]:
@@ -118,16 +129,20 @@ def write_new_club(name, description, categories):
                 updated_club["categories"] = categories
                 del clubs[i]
                 clubs.append(updated_club)
-                break
+                break # stop when correct club is found
 
         write_json(clubs)
-        return False
+        return True
     else:      
         club_json = {"name": name, "categories": categories, "description": description,
                     "favourites": 0}
-        clubs.append(club_json)
+        clubs.append(club_json) # add new club if it doesn't exist
         write_json(clubs)
-        return True
+
+        existing_comments = get_all_comments()
+        existing_comments[name] = [] # add the new club to the comments JSON file.
+
+        return False
 
 def add_favourites_field():
     """
@@ -135,12 +150,15 @@ def add_favourites_field():
     """
     existing = read_json()
 
-    if 'favourites' not in existing[0].keys():
+    if 'favourites' not in existing[0].keys(): # if the field has not already been added, add it.
         for club in existing:
             club['favourites'] = 0
     write_json(existing)
 
 def create_comment_file():
+    """
+    Create the file that stores comments with all of the clubs that are in the clubs json file.
+    """
     club = read_json()
     comment_dict = {}
 
@@ -151,34 +169,38 @@ def create_comment_file():
         json.dump(comment_dict, outfile)
 
 def add_club_comment(user, club, comment):
-
+    """
+    Add a new comment to an existing club.
+    """
     with open('club_comments.json') as json_file:
         comments = json.load(json_file)
         if club in comments.keys():
-            if comments[club] is None:
-                 comments[club] = [user + ": " + comment]
+            if comments[club] is None: # If there are no comments associated with the club Python returns None
+                 comments[club] = [user + ": " + comment] 
             else:
                  comments[club].append(user + ": " + comment)
             with open('club_comments.json', 'w') as outfile:
                 json.dump(comments, outfile)
-            return True
+            return True 
         else:
-            return False
+            return False # If the specified club name does not exist return False so an error can be specified to the api caller.
 
 def get_all_comments():
     with open('club_comments.json') as json_file:
         return json.load(json_file)
 
 if __name__ == "__main__":
-
-    soup = soupify(get_clubs_html())
+    """
+    Script should be run before the first time the webserver is started.
+    """
+    soup = soupify(get_clubs_html()) # scrape the web data
     clubs = [Club(get_club_name(x), get_club_tags(x),
-                get_club_description(x)) for x in get_clubs(soup)]
+                get_club_description(x)) for x in get_clubs(soup)] # put scraped web data into a List of users.
 
-    [write_new_club(club.name, club.description, club.categories) for club in clubs]
+    [write_new_club(club.name, club.description, club.categories) for club in clubs] # write all of the scraped clubs to the json file.
 
-    add_favourites_field()
-    create_comment_file()
+    add_favourites_field() # Add a field for favourites to the json file.
+    create_comment_file() # Add a json file for comments.
 
 
 
