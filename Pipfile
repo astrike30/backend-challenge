@@ -9,7 +9,6 @@ verify_ssl = true
 flask = "*"
 beautifulsoup4 = "*"
 passlib = "*"
-secrets = "*"
 uuid = "*"
 
 [requires]
