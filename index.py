@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from scraper import * # Web Scraping utility functions for Online Clubs with Penn.
-from users import *
+from users import * # Functions for interacting with user signup etc
 
 
 app = Flask(__name__)
@@ -16,6 +16,10 @@ def api():
 
 @app.route('/api/clubs', methods=['GET', 'POST'])
 def clubs():
+	"""
+	If a get request, return all of the stored clubs.
+	If a post request, add or update the specified clubs
+	"""
 	if request.method == 'GET':
 		return jsonify(read_json())
 	elif request.method == 'POST':
@@ -31,14 +35,16 @@ def clubs():
 
 @app.route('/api/user/<string:username>')
 def users(username):
-
+	"""
+	Return all info for specified user at specified route paramater.
+	"""
 	user = get_user(username)
 	
 	if user is None:
 		return jsonify({"message": "error"})
 	else:
 		json = vars(user)
-		del json["passwordHash"]
+		del json["passwordHash"] # remove all sensitive info from user
 		del json["token"]
 		del json["token_expiry"]
 		return jsonify(json)
@@ -47,25 +53,32 @@ def users(username):
 
 @app.route('/api/favorite', methods=['POST'])
 def favourite():
-	if request.method == 'POST':
+	"""
+	Flip the favourite state of a club for a given user.
+	If the user has already favourited the club, then unfavourite it,
+	otherwise favourite the club.
+	"""
 
-		token = request.json['token']
-		user = request.json['user']
-		club = request.json['club']
+	token = request.json['token']
+	user = request.json['user']
+	club = request.json['club']
 
-		if validate_token(user, token):
-			if not flip_user_fav(user, club):
-				inc_dec_fav_count(club, +1)
-				return jsonify({"message": "Added favourite"})
-			else:
-				inc_dec_fav_count(club, -1)
-				return jsonify({"message": "Removed favourite"})
+	if validate_token(user, token):
+		if not flip_user_fav(user, club):
+			inc_dec_fav_count(club, +1)
+			return jsonify({"message": "Added favourite"})
 		else:
-			return jsonify({"message": "Invalid Token"})
+			inc_dec_fav_count(club, -1)
+			return jsonify({"message": "Removed favourite"})
+	else:
+		return jsonify({"message": "Invalid Token"})
 	
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
+	"""
+	Sign the the user up with given information. Return an error if username already exists.
+	"""
 	username = request.json['username']
 	password = request.json['password']
 	name = request.json['name']
@@ -80,6 +93,10 @@ def signup():
 
 @app.route('/api/token')
 def token():
+	"""
+	Generate a new token for the specified user and password.
+	Return an error if username or password is wrong. 
+	"""
 	username = request.form['username']
 	password = request.form['password']
 
@@ -92,6 +109,10 @@ def token():
 
 @app.route('/api/comment', methods=["POST", "GET"])
 def comment():
+	"""
+	Return all comments for a specific club if a get request.
+	If a post request, then add a comment from a specific user if their token is correct and club exists.
+	"""
 	if request.method == 'POST':
 		token = request.json['token']
 		user = request.json['user']
